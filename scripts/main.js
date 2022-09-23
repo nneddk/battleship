@@ -12,15 +12,25 @@ const newGame = () =>{
 
     return newGame;
 }
+const shipHolder = () =>{
+
+}
 let gameState = [];
 const placeGameBoard = () =>{
     const newGameboard = document.createElement('div');
     newGameboard.classList.add('game-board')
 
-    for(let i = 0; i < 49; i++){
-        const gamePixel = document.createElement('div');
-        gamePixel.classList.add('game-pixel')
-        newGameboard.appendChild(gamePixel);
+    for(let x = 1; x <= 7; x++){
+        for(let y = 1; y <= 7; y++){
+            const gamePixel = document.createElement('div');
+            gamePixel.classList.add('game-pixel')
+            let coords = [x, y]
+            gameState.push([coords, gamePixel, 0]);
+            gamePixel.onclick =()=>{
+                console.log(gameState[(x*y) - 1]);
+            }
+            newGameboard.appendChild(gamePixel);
+        }
     }
 
     return newGameboard;
