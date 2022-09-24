@@ -18,6 +18,8 @@
 .game-pixel{
     border: 1px solid black;
     border-radius: 10px;
+
+    transition: all 0.1s;
 }
 
 @media only screen and (max-width: 600px) {

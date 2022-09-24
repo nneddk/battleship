@@ -12,7 +12,7 @@ html, body{
 }
 .content{
     height: 90vh;
-    background-color: yellow;
+    background-color: lightgray;
     display: flex;
     justify-content: center;
     align-items: center;
