@@ -13,7 +13,8 @@ const newGame = () =>{
                     ];
     let currP = 0;
     let currBlock = gamePiece[currP];
-
+    let gameReady = false;
+    let gameData = [];
     const blockHolder = () =>{
         const blockHolder = document.createElement('div');
         blockHolder.classList.add('block-holder');
@@ -22,31 +23,25 @@ const newGame = () =>{
         rotateBtn.classList.add('rotate-button');
         rotateBtn.textContent = 'rotate';
         rotateBtn.onclick = ()=>{
+            console.log(gameReady);
+            console.log(gameData);
             orientation = !orientation;
         }
         blockHolder.appendChild(rotateBtn);
         return blockHolder;
     }
-    
     const placeGameBoard = () =>{
         const newGameboard = document.createElement('div');
         newGameboard.classList.add('game-board')
-        
-        let gameState = [[0, 0, 0, 0, 0, 0, 0],
-                         [0, 0, 0, 0, 0, 0, 0],
-                         [0, 0, 0, 0, 0, 0, 0],
-                         [0, 0, 0, 0, 0, 0, 0],
-                         [0, 0, 0, 0, 0, 0, 0],
-                         [0, 0, 0, 0, 0, 0, 0],
-                         [0, 0, 0, 0, 0, 0, 0],
-                         
-        ];
-        
+        let gameState = [];
         for(let y = 0; y < 7; y++){
+            let tempArray = [];
+            let tempDataArray = [];
             for(let x = 0; x < 7; x++){
                 const gamePixel = document.createElement('div');
-                gamePixel.classList.add('game-pixel')
-                gameState[y][x] = [0, gamePixel, 0, 0];
+                gamePixel.classList.add('game-pixel');
+                tempDataArray.push(0),
+                tempArray.push([0, gamePixel, 0, 0]);
     
                 gamePixel.onmouseover =()=>{
                     pixelHighlight(y, x, true, currBlock);
@@ -67,7 +62,11 @@ const newGame = () =>{
                */
                 newGameboard.appendChild(gamePixel);
             }
+            gameData.push(tempDataArray);
+            gameState.push(tempArray);
+            
         }
+        
         function pixelHighlight(y, x, active, cB){
             let color = cB[3]
             let piece = cB[2];
@@ -101,6 +100,7 @@ const newGame = () =>{
 
         }
         let editOn = false;
+        
         function pixelClick(y, x, cB){
             let pieceAvailable = true;
             let color = cB[3]
@@ -119,6 +119,8 @@ const newGame = () =>{
                             gameState[i][j][1].classList.remove(color);
                             gameState[i][j][1].style.backgroundColor = '';
                             orientation = gameState[i][j][3];
+                            gameData[i][j] = 0;
+                            gameReady = false;
                         }
                     }
                 }
@@ -138,22 +140,26 @@ const newGame = () =>{
             }
             if(pieceAvailable){
                 for(let i = 0; i< piece; i++){
-
                     gameState[y + (orientation?i:0)] [x + (orientation?0:i)][1].classList.add(color);
                     gameState[y + (orientation?i:0)] [x + (orientation?0:i)][0] = token;
                     gameState[y + (orientation?i:0)] [x + (orientation?0:i)][2] = piece;
                     gameState[y + (orientation?i:0)] [x + (orientation?0:i)][3] = orientation;
+                    
+                    gameData[y + (orientation?i:0)] [x + (orientation?0:i)] = token;
                 }
+                console.log(currP);
                 if (currP <=3){
                     if(!editOn){
-                        currBlock = gamePiece[++currP];
-                    }else if(editOn){
-                        currBlock = gamePiece[currP];
-                        
+                        currP++;
                     }
+                    gameReady = false;
+                    
                 }else{
-                    currBlock = 0;
+                    gameReady = true;
                 }
+                console.log(gameReady);
+                currBlock = gameReady?0:gamePiece[currP];
+
                 editOn = false;
             }
             
