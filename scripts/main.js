@@ -1,3 +1,4 @@
+//new game
 const newGame = () =>{
     const newGame = document.createElement('div');
     newGame.classList.add('new-game');
@@ -15,21 +16,35 @@ const newGame = () =>{
     let currBlock = gamePiece[currP];
     let gameReady = false;
     let gameData = [];
+    let blocksPlaced = 0;
     const blockHolder = () =>{
         const blockHolder = document.createElement('div');
         blockHolder.classList.add('block-holder');
 
         const rotateBtn = document.createElement('button');
-        rotateBtn.classList.add('rotate-button');
+        rotateBtn.classList.add('rotate-btn');
         rotateBtn.textContent = 'rotate';
         rotateBtn.onclick = ()=>{
-            console.log(gameReady);
-            console.log(gameData);
             orientation = !orientation;
         }
+
+        const gameStartBtn = document.createElement('button');
+        gameStartBtn.classList.add('game-start-btn');
+        gameStartBtn.textContent = 'start game';
+        gameStartBtn.onclick = () => {
+            if(!gameReady){
+                console.log('game not ready');
+            }else{
+                console.log('game ready', gameData);
+            }
+        }
+
+        
         blockHolder.appendChild(rotateBtn);
+        blockHolder.appendChild(gameStartBtn);
         return blockHolder;
     }
+
     const placeGameBoard = () =>{
         const newGameboard = document.createElement('div');
         newGameboard.classList.add('game-board')
@@ -54,12 +69,6 @@ const newGame = () =>{
                     pixelClick(y, x, currBlock);
                     
                 }
-                
-                /*
-               gamePixel.onmouseover = () =>{
-                console.log(coords);
-               }
-               */
                 newGameboard.appendChild(gamePixel);
             }
             gameData.push(tempDataArray);
@@ -106,9 +115,10 @@ const newGame = () =>{
             let color = cB[3]
             let piece = cB[2];
             let token = cB[0];
-
+            
             if(gameState[y][x][0] != 0 && !editOn){
                 editOn = true;
+                blocksPlaced--;
                 let tokenChecker = gameState[y][x][0];
                 for(let i = 0; i < 7; i++){
                     for(let j = 0; j < 7; j++){
@@ -121,11 +131,11 @@ const newGame = () =>{
                             orientation = gameState[i][j][3];
                             gameData[i][j] = 0;
                             gameReady = false;
+                            
                         }
                     }
                 }
                 pieceAvailable = false;
-
             }
 
             for(let i = 0; i<piece; i++){
@@ -147,20 +157,20 @@ const newGame = () =>{
                     
                     gameData[y + (orientation?i:0)] [x + (orientation?0:i)] = token;
                 }
-                console.log(currP);
-                if (currP <=3){
-                    if(!editOn){
-                        currP++;
+                
+                //am idiot
+                if (currP <4||blocksPlaced < 4){
+                    if(editOn == false){
+                        currP++;   
                     }
                     gameReady = false;
-                    
                 }else{
                     gameReady = true;
                 }
-                console.log(gameReady);
-                currBlock = gameReady?0:gamePiece[currP];
-
+                blocksPlaced++;
                 editOn = false;
+                console.log(currP);
+                currBlock = gameReady?0:gamePiece[currP];
             }
             
             
