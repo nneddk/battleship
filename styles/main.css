@@ -1,19 +1,60 @@
+
+@import url('https://fonts.googleapis.com/css2?family=Fredoka+One&family=Roboto+Condensed:wght@700&display=swap');
 html, body{
     height: 100%;
     margin: 0;
     font-size: 15px;
 }
-*{
-    border:solid;
-}
+
 .header{
     height: 10vh;
-    background-color: blue;
+    background-color: black;
+    color: lightgrey;
+    z-index: 1;
+    padding-left: 1em;
+    font-family: 'Roboto Condensed', sans-serif;
+    font-size: 1.6rem;    
+    display: flex;
+    align-items: center;
 }
 .content{
     height: 90vh;
-    background-color: lightgray;
+    background-image: linear-gradient(to right, purple, orange);
     display: flex;
     justify-content: center;
     align-items: center;
 }
+/*animation below */
+.shapes{
+    
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+.shapes li {
+    position:absolute;
+	list-style: none;
+	width: 30px;
+	height: 30px;
+    border-radius: 50%; 
+	background: grey;
+    border: grey;
+	animation: animate 10s linear infinite;
+	bottom: 0;
+
+    overflow: hidden;
+}
+
+@keyframes animate {
+	0% {
+		opacity: 0;
+	}
+	50% {
+		opacity: 1;
+	}
+	100% {
+		opacity: 0;
+	}
+}
+
