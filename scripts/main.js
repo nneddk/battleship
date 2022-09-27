@@ -3,7 +3,7 @@ const newGame = () =>{
     const newGame = document.createElement('div');
     newGame.classList.add('new-game');
     
-    //1 for vertical, 0 for horizontal
+    //0 for horizontal, 1 for vertical
     let orientation = 1;
     // d = destroyer, s = submarine, cruiser = c, b = battleship, C = carrier
     let gamePiece = [ [1,'d', 2, 'blue'],
@@ -12,6 +12,7 @@ const newGame = () =>{
                       [4,'b', 4, 'violet'], 
                       [5,'C', 5, 'orange']
                     ];
+    //data markers
     let currP = 0;
     let currBlock = gamePiece[currP];
     let gameReady = false;
@@ -40,11 +41,10 @@ const newGame = () =>{
             currBlock = gamePiece[currP];
             for(let i = 0; i < 7; i++){
                 for(let j = 0; j < 7; j++){
-                    gameState[i][j][0] = 0;
+                    gameState[i][j][1] = 0;
                     gameState[i][j][2] = 0;
-                    gameState[i][j][3] = 0;
-                    gameState[i][j][1].style.backgroundColor = '';
-                    gameState[i][j][1].style.opacity = '30%';
+                    gameState[i][j][0].style.backgroundColor = '';
+                    gameState[i][j][0].style.opacity = '30%';
                     gameData[i][j] = 0;  
                 }
             }
@@ -56,7 +56,7 @@ const newGame = () =>{
         gameStartBtn.textContent = 'play';
         gameStartBtn.onclick = () => {
             if(!gameReady){
-                console.log('game not ready');
+                console.log('game not ready', gameData);
             }else{
                 console.log('game ready', gameData);
             }
@@ -73,13 +73,14 @@ const newGame = () =>{
         const newGameboard = document.createElement('div');
         newGameboard.classList.add('game-board')
         for(let y = 0; y < 7; y++){
-            let tempArray = [];
+            let tempStateArray = [];
             let tempDataArray = [];
             for(let x = 0; x < 7; x++){
                 const gamePixel = document.createElement('div');
                 gamePixel.classList.add('game-pixel');
-                tempDataArray.push(0),
-                tempArray.push([0, gamePixel, 0, 0]);
+                tempDataArray.push(0);
+                //div block, token, orientation
+                tempStateArray.push([gamePixel ,0 ,0]);
     
                 gamePixel.onmouseover =()=>{
                     pixelHighlight(y, x, true, currBlock);
@@ -95,39 +96,40 @@ const newGame = () =>{
                 newGameboard.appendChild(gamePixel);
             }
             gameData.push(tempDataArray);
-            gameState.push(tempArray);
+            gameState.push(tempStateArray);
             
         }
-        
+        //check if piece is available
+        function pieceAvailable(y, x, piece){
+            for(let i = 0; i<piece; i++){
+                if (orientation && gameState[y+i]==null){
+                        return false;
+                }else if (!orientation && gameState[x+i]==null){
+                    return false; 
+                }
+                if(gameData[y + (orientation?i:0)] [x + (orientation?0:i)] != 0){
+                    return false;
+                }
+            }
+            return true;
+        }
+        //highlights piece
         function pixelHighlight(y, x, active, cB){
             let color = cB[3]
             let piece = cB[2];
-
-            let pieceAvailable = true;
-    
-            for(let i = 0; i<piece; i++){
-                if (gameState[y + i] == null && orientation){
-                    pieceAvailable = false;
-                }else if (gameState[y + (orientation?i:0)] [x + (orientation?0:i)] == null){
-                    pieceAvailable = false;
-                }else if(gameState[y + (orientation?i:0)] [x + (orientation?0:i)][0] != 0){
-                    pieceAvailable = false;
-                }
-                
-            }
             if(active){
-                if(pieceAvailable){
-                    for(let i = 0; i< piece; i++){
-                        gameState[y + (orientation?i:0)] [x + (orientation?0:i)][1].style.backgroundColor = color;
-                        gameState[y + (orientation?i:0)] [x + (orientation?0:i)][1].style.opacity = '30%';
+                if(pieceAvailable(y, x, piece)){
+                    for(let i = 0; i< piece; i++){    
+                        gameState[y + (orientation?i:0)] [x + (orientation?0:i)][0].style.backgroundColor = color;
+                        gameState[y + (orientation?i:0)] [x + (orientation?0:i)][0].style.opacity = '30%';
                     }
                 }
             }else{
-                if(pieceAvailable){
+                if(pieceAvailable(y, x, piece)){
                     for(let i = 0; i < piece ; i++){
                         let color = 'rgb(0, 0, 0)';
-                        gameState[y + (orientation?i:0)] [x + (orientation?0:i)][1].style.backgroundColor = color;
-                        gameState[y + (orientation?i:0)] [x + (orientation?0:i)][1].style.opacity = '30%';
+                        gameState[y + (orientation?i:0)] [x + (orientation?0:i)][0].style.backgroundColor = color;
+                        gameState[y + (orientation?i:0)] [x + (orientation?0:i)][0].style.opacity = '30%';
                     }
                 }
             }
@@ -135,71 +137,55 @@ const newGame = () =>{
         }
         let editOn = false;
         function pixelClick(y, x, cB){
-            let pieceAvailable = true;
-            let color = cB[3]
-            let piece = cB[2];
             let token = cB[0];
+            let piece = cB[2];
+            let color = cB[3];
             
-            if(gameState[y][x][0] != 0 && !editOn){
-                const playBtn = document.querySelector('.play-btn');
-                playBtn.classList.remove('game-ready');
-                orientation = gameState[y][x][3];
-                gameReady = false;
-                editOn = true;
+            if(gameData[y][x] != 0 && !editOn){
                 blocksPlaced--;
-                let tokenChecker = gameState[y][x][0];
-                currBlock = gamePiece[tokenChecker - 1];
+                editOn = true;
+                let tokenChanger = gameData[y][x];
+                currBlock = gamePiece[tokenChanger - 1];
                 for(let i = 0; i < 7; i++){
                     for(let j = 0; j < 7; j++){
-                        if(gameState[i][j][0] == tokenChecker){    
-                            gameState[i][j][0] = 0;
+                        if(gameState[i][j][1] == tokenChanger){
+                            gameState[i][j][1] = 0;
+                            orientation = gameState[i][j][2];
                             gameState[i][j][2] = 0;
-                            gameState[i][j][1].style.backgroundColor = '';
-                            gameState[i][j][1].style.opacity = '30%';
-                            gameData[i][j] = 0;   
+                            gameState[i][j][0].style.backgroundColor = '';
+                            gameState[i][j][0].style.opacity = '30%';
+                            gameData[i][j] = 0; 
                         }
-                    }
-                }
-                pieceAvailable = false;
-            }
 
-            for(let i = 0; i<piece; i++){
-                if (gameState[y + i]==null && orientation){
-                    pieceAvailable = false;
-                }else if (gameState[y + (orientation?i:0)] [x + (orientation?0:i)] == null){
-                    pieceAvailable = false;
-                }else if(gameState[y + (orientation?i:0)] [x + (orientation?0:i)][0] != 0){
-                    pieceAvailable = false;
-                }
-                
-            }
-            if(pieceAvailable){
-                for(let i = 0; i< piece; i++){
-                    gameState[y + (orientation?i:0)] [x + (orientation?0:i)][1].style.backgroundColor = color;
-                    gameState[y + (orientation?i:0)] [x + (orientation?0:i)][1].style.opacity = '100%';
-                    gameState[y + (orientation?i:0)] [x + (orientation?0:i)][0] = token;
-                    gameState[y + (orientation?i:0)] [x + (orientation?0:i)][2] = piece;
-                    gameState[y + (orientation?i:0)] [x + (orientation?0:i)][3] = orientation;
-                    
-                    gameData[y + (orientation?i:0)] [x + (orientation?0:i)] = token;
-                }
-                
-                //am idiot
-                const playBtn = document.querySelector('.play-btn');
-                if (currP <4||blocksPlaced < 4){
-                    if(editOn == false){
-                        currP++;   
                     }
+                }
+            }else if(pieceAvailable(y, x, piece) && blocksPlaced <=4){
+                //places block
+                for(let i = 0; i< piece; i++){    
+                    gameState[y + (orientation?i:0)] [x + (orientation?0:i)][0].style.backgroundColor = color;
+                    gameState[y + (orientation?i:0)] [x + (orientation?0:i)][0].style.opacity = '100%';
+                    gameState[y + (orientation?i:0)] [x + (orientation?0:i)][1] = token;
+                    gameState[y + (orientation?i:0)] [x + (orientation?0:i)][2] = orientation;
+
+                    gameData[y + (orientation?i:0)] [x + (orientation?0:i)] = token;
+                       
+                }
+                if(currP < 4){
+                    
+                    if(!editOn){
+                        currP++; 
+                    }
+                    
                     gameReady = false;
-                    playBtn.classList.remove('game-ready');
                 }else{
-                    playBtn.classList.add('game-ready');
                     gameReady = true;
                 }
                 blocksPlaced++;
-                editOn = false;
                 currBlock = gameReady?0:gamePiece[currP];
+                editOn = false;
             }
+            
+
             
             
         }
