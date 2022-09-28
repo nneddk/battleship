@@ -45,7 +45,7 @@ const newGame = () =>{
                     gameState[i][j][1] = 0;
                     gameState[i][j][2] = 0;
                     gameState[i][j][0].style.backgroundColor = '';
-                    gameState[i][j][0].style.opacity = '30%';
+                    gameState[i][j][0].style.opacity = '50%';
                     gameData[i][j] = 0;  
                 }
             }
@@ -121,13 +121,13 @@ const newGame = () =>{
             if(active){
                 if(pieceAvailable(y, x, piece)){
                     for(let i = 0; i< piece; i++){    
-                        gameState[y + (orientation?i:0)] [x + (orientation?0:i)][0].style.opacity = '50%';
+                        gameState[y + (orientation?i:0)] [x + (orientation?0:i)][0].style.opacity = '80%';
                     }
                 }
             }else{
                 if(pieceAvailable(y, x, piece)){
                     for(let i = 0; i < piece ; i++){
-                        gameState[y + (orientation?i:0)] [x + (orientation?0:i)][0].style.opacity = '30%';
+                        gameState[y + (orientation?i:0)] [x + (orientation?0:i)][0].style.opacity = '50%';
                     }
                 }
             }
@@ -154,7 +154,7 @@ const newGame = () =>{
                             orientation = gameState[i][j][2];
                             gameState[i][j][2] = 0;
                             gameState[i][j][0].style.backgroundColor = '';
-                            gameState[i][j][0].style.opacity = '30%';
+                            gameState[i][j][0].style.opacity = '50%';
                             gameData[i][j] = 0; 
                         }
 
@@ -212,7 +212,7 @@ const animatedList = () =>{
         shapeDiv.style.left = getRandomInt(95, 0)+'vw';
         shapeDiv.style.top = getRandomInt(80, 10)+'vh';
         shapeDiv.style.width = shapeDiv.style.height = getRandomInt(5, 1)+'vmin';
-        shapeDiv.style.animationDuration = getRandomInt(10,2)+'s';
+        shapeDiv.style.animationDuration = getRandomInt(10,5)+'s';
         animatedList.appendChild(shapeDiv);
 
     }
