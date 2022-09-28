@@ -21,10 +21,10 @@
 }
 .game-pixel{
     background-color: rgb(0, 0, 0);
-    opacity: 30%;
+    opacity: 50%;
     border-radius: 10px;
 
-    transition: all 0.3s;
+    transition: all 0.1s;
 }
 .block-holder{
     display:grid;
