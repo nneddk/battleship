@@ -6,11 +6,11 @@ const newGame = () =>{
     //0 for horizontal, 1 for vertical
     let orientation = 1;
     // d = destroyer, s = submarine, cruiser = c, b = battleship, C = carrier
-    let gamePiece = [ [1,'d', 2, 'blue'],
-                      [2,'s', 3, 'yellow'], 
-                      [3,'c', 3, 'red'], 
-                      [4,'b', 4, 'violet'], 
-                      [5,'C', 5, 'orange']
+    let gamePiece = [ [1,'d', 2, 'white'],
+                      [2,'s', 3, 'lightgrey'], 
+                      [3,'c', 3, 'darkgrey'], 
+                      [4,'b', 4, 'grey'], 
+                      [5,'C', 5, 'black']
                     ];
     //data markers
     let currP = 0;
@@ -32,6 +32,7 @@ const newGame = () =>{
         const clearBtn = document.createElement('button');
         clearBtn.setAttribute('type', 'button');
         clearBtn.classList.add('clear-btn');
+        clearBtn.textContent = 'X';
         clearBtn.onclick = ()=>{
             const playBtn = document.querySelector('.play-btn');
             playBtn.classList.remove('game-ready');
@@ -81,13 +82,14 @@ const newGame = () =>{
                 tempDataArray.push(0);
                 //div block, token, orientation
                 tempStateArray.push([gamePixel ,0 ,0]);
-    
+                
                 gamePixel.onmouseover =()=>{
                     pixelHighlight(y, x, true, currBlock);
                 }
                 gamePixel.onmouseleave = () =>{
                     pixelHighlight(y, x, false, currBlock);
                 }
+                
 
                 gamePixel.onclick =()=>{
                     pixelClick(y, x, currBlock);
@@ -115,20 +117,16 @@ const newGame = () =>{
         }
         //highlights piece
         function pixelHighlight(y, x, active, cB){
-            let color = cB[3]
             let piece = cB[2];
             if(active){
                 if(pieceAvailable(y, x, piece)){
                     for(let i = 0; i< piece; i++){    
-                        gameState[y + (orientation?i:0)] [x + (orientation?0:i)][0].style.backgroundColor = color;
-                        gameState[y + (orientation?i:0)] [x + (orientation?0:i)][0].style.opacity = '30%';
+                        gameState[y + (orientation?i:0)] [x + (orientation?0:i)][0].style.opacity = '50%';
                     }
                 }
             }else{
                 if(pieceAvailable(y, x, piece)){
                     for(let i = 0; i < piece ; i++){
-                        let color = 'rgb(0, 0, 0)';
-                        gameState[y + (orientation?i:0)] [x + (orientation?0:i)][0].style.backgroundColor = color;
                         gameState[y + (orientation?i:0)] [x + (orientation?0:i)][0].style.opacity = '30%';
                     }
                 }
@@ -142,6 +140,9 @@ const newGame = () =>{
             let color = cB[3];
             
             if(gameData[y][x] != 0 && !editOn){
+                const playBtn = document.querySelector('.play-btn');
+                playBtn.classList.remove('game-ready');
+                gameReady = false;
                 blocksPlaced--;
                 editOn = true;
                 let tokenChanger = gameData[y][x];
@@ -159,7 +160,7 @@ const newGame = () =>{
 
                     }
                 }
-            }else if(pieceAvailable(y, x, piece) && blocksPlaced <=4){
+            }else if(pieceAvailable(y, x, piece)){
                 //places block
                 for(let i = 0; i< piece; i++){    
                     gameState[y + (orientation?i:0)] [x + (orientation?0:i)][0].style.backgroundColor = color;
@@ -170,18 +171,17 @@ const newGame = () =>{
                     gameData[y + (orientation?i:0)] [x + (orientation?0:i)] = token;
                        
                 }
-                if(currP < 4){
+                
+                editOn?currP:currP++;
+                if(currP <= 4){
+                    currBlock = gamePiece[currP];
                     
-                    if(!editOn){
-                        currP++; 
-                    }
-                    
-                    gameReady = false;
                 }else{
+                    currBlock = 0;
+                    const playBtn = document.querySelector('.play-btn');
+                    playBtn.classList.add('game-ready');
                     gameReady = true;
                 }
-                blocksPlaced++;
-                currBlock = gameReady?0:gamePiece[currP];
                 editOn = false;
             }
             
@@ -218,7 +218,7 @@ const animatedList = () =>{
     }
     return animatedList;
 }
-//document.body.appendChild(animatedList());
+document.body.appendChild(animatedList());
 
 const placeContent = (content) =>{
     const currContent = document.querySelector('.content');
