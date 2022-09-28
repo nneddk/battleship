@@ -12,14 +12,14 @@ html, body{
     color: lightgrey;
     z-index: 1;
     padding-left: 1em;
-    font-family: 'Roboto Condensed', sans-serif;
-    font-size: 1.6rem;    
+    font-family: 'Fredoka One', cursive;
+    font-size: 1.8rem;    
     display: flex;
     align-items: center;
 }
 .content{
     height: 90vh;
-    background-image: linear-gradient(to right, purple, orange);
+    background-image: linear-gradient(to right, darkblue, lightblue);
     display: flex;
     justify-content: center;
     align-items: center;
@@ -31,6 +31,8 @@ html, body{
     flex-direction: column;
     justify-content: center;
     align-items: center;
+
+    
 }
 .shapes li {
     position:absolute;
@@ -38,8 +40,8 @@ html, body{
 	width: 30px;
 	height: 30px;
     border-radius: 50%; 
-	background: grey;
-    border: grey;
+	background: blue;
+    border: none;
 	animation: animate 10s linear infinite;
 	bottom: 0;
 
