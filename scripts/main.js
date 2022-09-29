@@ -65,6 +65,7 @@ const newGame = () =>{
                 let enemyData = generateEnemyBoard();
                 console.log('game ready', playerData);
                 console.log('enemy board: ', enemyData);
+                placeContent();
                 
             }
         }
@@ -245,7 +246,7 @@ const animatedList = () =>{
       }
     for(let i = 0; i<100; i++){
         const shapeDiv = document.createElement('li');
-        shapeDiv.style.left = getRandomInt(95, 0)+'vw';
+        shapeDiv.style.left = getRandomInt(93, 0)+'vw';
         shapeDiv.style.top = getRandomInt(80, 10)+'vh';
         shapeDiv.style.width = shapeDiv.style.height = getRandomInt(5, 1)+'vmin';
         shapeDiv.style.animationDuration = getRandomInt(10,5)+'s';
