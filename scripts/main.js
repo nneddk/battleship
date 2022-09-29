@@ -58,8 +58,14 @@ const newGame = () =>{
         gameStartBtn.onclick = () => {
             if(!gameReady){
                 console.log('game not ready', gameData);
+                
+                
             }else{
-                console.log('game ready', gameData);
+                let playerData = gameData;
+                let enemyData = generateEnemyBoard();
+                console.log('game ready', playerData);
+                console.log('enemy board: ', enemyData);
+                
             }
         }
 
@@ -69,7 +75,50 @@ const newGame = () =>{
         blockHolder.appendChild(gameStartBtn);
         return blockHolder;
     }
-
+    //creates enemy board state
+    const generateEnemyBoard = () => {
+        let enemyData = [];
+        for (let y = 0; y < 7; y++){
+            let tempData = [];
+            for(let x = 0; x < 7; x++){
+                tempData.push(0);
+            }
+            enemyData.push(tempData);
+        }
+        function getRandomInt(max, floor) {
+            return Math.floor(Math.random() * max + floor);
+        }
+        for(let i = 0; i<5;){
+            orientation = getRandomInt(2,0);
+            piece = gamePiece[i][2];
+            token = gamePiece[i][0];
+            let x = getRandomInt(6,0);
+            let y = getRandomInt(6,0);
+            if(pieceAvailable(y, x, piece, enemyData)){
+                for(let i = 0; i< piece; i++){    
+                    enemyData[y + (orientation?i:0)] [x + (orientation?0:i)] = token;
+                       
+                }
+                i++;
+            }
+        }
+        return enemyData;
+    }
+    //check if piece is available
+    function pieceAvailable(y, x, piece, data){
+        for(let i = 0; i<piece; i++){
+            if (orientation && data[y+i]==null){
+                    return false;
+            }else if (!orientation && data[x+i]==null){
+                return false; 
+            }
+            if(data[y + (orientation?i:0)] [x + (orientation?0:i)] != 0){
+                return false;
+            }
+            
+        }
+        return true;
+    }
     const placeGameBoard = () =>{
         const newGameboard = document.createElement('div');
         newGameboard.classList.add('game-board')
@@ -101,31 +150,17 @@ const newGame = () =>{
             gameState.push(tempStateArray);
             
         }
-        //check if piece is available
-        function pieceAvailable(y, x, piece){
-            for(let i = 0; i<piece; i++){
-                if (orientation && gameState[y+i]==null){
-                        return false;
-                }else if (!orientation && gameState[x+i]==null){
-                    return false; 
-                }
-                if(gameData[y + (orientation?i:0)] [x + (orientation?0:i)] != 0){
-                    return false;
-                }
-            }
-            return true;
-        }
         //highlights piece
         function pixelHighlight(y, x, active, cB){
             let piece = cB[2];
             if(active){
-                if(pieceAvailable(y, x, piece)){
+                if(pieceAvailable(y, x, piece, gameData)){
                     for(let i = 0; i< piece; i++){    
                         gameState[y + (orientation?i:0)] [x + (orientation?0:i)][0].style.opacity = '80%';
                     }
                 }
             }else{
-                if(pieceAvailable(y, x, piece)){
+                if(pieceAvailable(y, x, piece, gameData)){
                     for(let i = 0; i < piece ; i++){
                         gameState[y + (orientation?i:0)] [x + (orientation?0:i)][0].style.opacity = '50%';
                     }
@@ -160,7 +195,7 @@ const newGame = () =>{
 
                     }
                 }
-            }else if(pieceAvailable(y, x, piece)){
+            }else if(pieceAvailable(y, x, piece, gameData)){
                 //places block
                 for(let i = 0; i< piece; i++){    
                     gameState[y + (orientation?i:0)] [x + (orientation?0:i)][0].style.backgroundColor = color;
@@ -189,6 +224,7 @@ const newGame = () =>{
             
             
         }
+        
     
         return newGameboard;
     }
@@ -219,7 +255,7 @@ const animatedList = () =>{
     return animatedList;
 }
 document.body.appendChild(animatedList());
-
+//places content on the page
 const placeContent = (content) =>{
     const currContent = document.querySelector('.content');
 
@@ -229,6 +265,7 @@ const placeContent = (content) =>{
 
     currContent.appendChild(content);
 }
+
 
 
 placeContent(newGame());
