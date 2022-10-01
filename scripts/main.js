@@ -242,8 +242,23 @@ const startGame = (playerBoard, enemyBoard)=>{
     const turnDiv = document.createElement('div');
     turnDiv.classList.add('turn');
     turnDiv.textContent = 'Player Turn';
-
-    const side = (board) =>{
+    let playerData = [];
+    let enemyData = [];
+    let playerShip = [ 
+        [2,'Destroyer'],
+        [3,'Submarine'], 
+        [3,'Cruiser'], 
+        [4,'Battleship'], 
+        [5,'Carrier']
+      ];
+    let enemyShip = [ 
+        [2,'Destroyer'],
+        [3,'Submarine'], 
+        [3,'Cruiser'], 
+        [4,'Battleship'], 
+        [5,'Carrier']
+      ];
+    const side = (board, player) =>{
         const side = document.createElement('div');
         side.classList.add('side');
 
@@ -253,25 +268,51 @@ const startGame = (playerBoard, enemyBoard)=>{
         const sideStatus = document.createElement('div');
         sideStatus.classList.add('side-status');
         sideStatus.textContent = 'Hit/Miss';
-
+        
         for(let y = 0; y < 7; y++){
+            let tempData = [];
             for(let x = 0; x < 7; x++){
                 const gamePixel = document.createElement('div');
                 gamePixel.classList.add('game-pixel');
                 gamePixel.textContent = board[y][x];
-
+                tempData.push([gamePixel, board[y][x]])
+                gamePixel.onclick = () =>{
+                    if(!player){
+                        hit(enemyData, y, x, enemyShip);
+                    }else{
+                        hit(playerData, y, x, playerShip);
+                    }
+                }
+                
                 sideBoard.appendChild(gamePixel);
             }
+            player?playerData.push(tempData):enemyData.push(tempData);
         }
 
         side.appendChild(sideStatus);
         side.appendChild(sideBoard);
         return side;
     }
+    const hit = (data, y, x, ship) =>{
+        
+        if(data[y][x][1] != 0){
+            if(ship[(data[y][x][1]) - 1][0] != 0){
+                console.log('Hit!');
+                ship[(data[y][x][1]) - 1][0]--;
+                if(ship[(data[y][x][1]) - 1][0] == 0){
+                console.log(ship[(data[y][x][1]) - 1][1]+' has been sunk!')
+                }
+            }
+            
+        }else{
+            console.log('Miss');
+        }
+        console.log(ship);
+    }
 
     startGame.appendChild(turnDiv);
-    startGame.appendChild(side(playerBoard));
-    startGame.appendChild(side(enemyBoard));
+    startGame.appendChild(side(playerBoard, true));
+    startGame.appendChild(side(enemyBoard,false));
     return startGame;
 }
 //animated list
