@@ -18,7 +18,6 @@ const newGame = () =>{
     let gameReady = false;
     let gameData = [];
     let gameState = [];
-    let blocksPlaced = 0;
     const blockHolder = () =>{
         const blockHolder = document.createElement('div');
         blockHolder.classList.add('block-holder');
@@ -37,7 +36,6 @@ const newGame = () =>{
             const playBtn = document.querySelector('.play-btn');
             playBtn.classList.remove('game-ready');
             gameReady = false;
-            blocksPlaced = 0;
             currP = 0;
             currBlock = gamePiece[currP];
             for(let i = 0; i < 7; i++){
@@ -56,6 +54,7 @@ const newGame = () =>{
         gameStartBtn.classList.add('play-btn');
         gameStartBtn.textContent = 'play';
         gameStartBtn.onclick = () => {
+            //placeContent(startGame(generateEnemyBoard(),generateEnemyBoard()));
             if(!gameReady){
                 console.log('game not ready', gameData);
                 
@@ -65,7 +64,7 @@ const newGame = () =>{
                 let enemyData = generateEnemyBoard();
                 console.log('game ready', playerData);
                 console.log('enemy board: ', enemyData);
-                placeContent();
+                placeContent(startGame(playerData, enemyData));
                 
             }
         }
@@ -179,7 +178,6 @@ const newGame = () =>{
                 const playBtn = document.querySelector('.play-btn');
                 playBtn.classList.remove('game-ready');
                 gameReady = false;
-                blocksPlaced--;
                 editOn = true;
                 let tokenChanger = gameData[y][x];
                 currBlock = gamePiece[tokenChanger - 1];
@@ -236,6 +234,45 @@ const newGame = () =>{
     newGame.appendChild(placeGameBoard());
     newGame.appendChild(blockHolder());
     return newGame;
+}
+//start game
+const startGame = (playerBoard, enemyBoard)=>{
+    const startGame = document.createElement('div');
+    startGame.classList.add('start-game');
+    const turnDiv = document.createElement('div');
+    turnDiv.classList.add('turn');
+    turnDiv.textContent = 'Player Turn';
+
+    const side = (board) =>{
+        const side = document.createElement('div');
+        side.classList.add('side');
+
+        const sideBoard = document.createElement('div');
+        sideBoard.classList.add('start-game-board');
+
+        const sideStatus = document.createElement('div');
+        sideStatus.classList.add('side-status');
+        sideStatus.textContent = 'Hit/Miss';
+
+        for(let y = 0; y < 7; y++){
+            for(let x = 0; x < 7; x++){
+                const gamePixel = document.createElement('div');
+                gamePixel.classList.add('game-pixel');
+                gamePixel.textContent = board[y][x];
+
+                sideBoard.appendChild(gamePixel);
+            }
+        }
+
+        side.appendChild(sideStatus);
+        side.appendChild(sideBoard);
+        return side;
+    }
+
+    startGame.appendChild(turnDiv);
+    startGame.appendChild(side(playerBoard));
+    startGame.appendChild(side(enemyBoard));
+    return startGame;
 }
 //animated list
 const animatedList = () =>{
