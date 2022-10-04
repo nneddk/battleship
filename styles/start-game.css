@@ -51,4 +51,9 @@
     grid-template-columns: repeat(7, 1fr);
     grid-template-rows: repeat(7, 1fr);
     gap: 1px;
+
+    transition: all 0.3s;
+}
+.pixel-place{
+    transition: all 0.3s;
 }
