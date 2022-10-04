@@ -19,7 +19,7 @@ html, body{
 }
 .content{
     height: 90vh;
-    background-image: linear-gradient(to right, darkblue, lightblue);
+    background-image: linear-gradient(to right, darkblue, lightblue, darkblue);
     display: flex;
     justify-content: center;
     align-items: center;
