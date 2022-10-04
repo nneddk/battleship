@@ -53,7 +53,7 @@ const newGame = () =>{
         gameStartBtn.classList.add('play-btn');
         gameStartBtn.textContent = 'play';
         gameStartBtn.onclick = () => {
-            placeContent(startGame(generateEnemyBoard(),generateEnemyBoard()));
+            //placeContent(startGame(generateEnemyBoard(),generateEnemyBoard()));
             if(gameReady){
                 let playerData = gameData;
                 let enemyData = generateEnemyBoard();
@@ -262,25 +262,25 @@ const startGame = (playerBoard, enemyBoard)=>{
 
         const sideStatus = document.createElement('div');
         sideStatus.classList.add('side-status');
-        sideStatus.textContent = player?'Player':'Opponent ';
-        
+        sideStatus.textContent = player?'Player Board: ':'Opponent Board: ';
+
         for(let y = 0; y < 7; y++){
             let tempData = [];
             for(let x = 0; x < 7; x++){
                 const gamePixel = document.createElement('div');
                 gamePixel.classList.add('game-pixel');
                 gamePixel.classList.add('pixel-place');
-                gamePixel.style.backgroundColor = 'rgb(0,0,0, 0.5)';
                 if(player){
                     gamePixel.classList.add('player');
                     if(board[y][x] != 0){
-                        gamePixel.style.backgroundColor = 'rgb(0,0,0, 0.8)';
+                        gamePixel.style.backgroundColor = 'rgb(0,0,0, 0.5)';
                     }
+                }else{
+                    gamePixel.classList.add('opponent');
                 }
                 
                 tempData.push([gamePixel, board[y][x]])
                 let clicked = 0;
-                let cd = 1;
                 gamePixel.onclick = () =>{
                     if(!clicked){
                         if(!player){
@@ -292,7 +292,7 @@ const startGame = (playerBoard, enemyBoard)=>{
 
                                 setTimeout(() => {
                                     aiTurn();
-                                }, 1000);
+                                }, 1200);
                             }
                         }else if(player){
                             if(whoTurn){
@@ -315,29 +315,32 @@ const startGame = (playerBoard, enemyBoard)=>{
         }
 
         side.appendChild(sideStatus);
+        if(player){
+            const wrapper = document.createElement('div');
+            wrapper.classList.add('wrapper');
+            side.appendChild(wrapper);
+        }
         side.appendChild(sideBoard);
         return side;
     }
     const hit = (data, y, x, ship) =>{
         const nameStatus = document.querySelectorAll('.side-status');
         const turnStatus = document.querySelector('.turn');
+        if(whoTurn){
+            nameStatus[1].style.textShadow = '5px 10px 10px black';
+            nameStatus[0].style.textShadow = '';
+        }else{
+            nameStatus[0].style.textShadow = '5px 10px 10px black';
+            nameStatus[1].style.textShadow = '';
+        }
         if(data[y][x][1] != 0){
             if(ship[(data[y][x][1]) - 1][0] != 0){
                 turnStatus.textContent = 'Hit!';
                 data[y][x][0].style.color = 'red';
                 data[y][x][0].textContent = 'x';
+                data[y][x][0].style.border = '2px dashed';
 
-                if(whoTurn){
-                    nameStatus[0].style.color = 'red';
-                    setTimeout(() => {
-                        nameStatus[0].style.color = 'white';
-                    }, 500);
-                }else{
-                    nameStatus[1].style.color = 'red';
-                    setTimeout(() => {
-                        nameStatus[1].style.color = 'white';
-                    }, 500);
-                }
+
                 ship[(data[y][x][1]) - 1][0]--;
                 if(ship[(data[y][x][1]) - 1][0] == 0){
                     turnStatus.textContent = ship[(data[y][x][1]) - 1][1]+' has been sunk!';
@@ -351,25 +354,32 @@ const startGame = (playerBoard, enemyBoard)=>{
             data[y][x][0].textContent = 'x';
         }
     }
-
-    const aiTurn = ()=>{
+    let combo = 0;
+    let comboYX = [];
+    const aiTurn = ()=> {
         function getRandomInt(max, floor) {
             return Math.floor(Math.random() * max + floor);
           }
-        let x = getRandomInt(6, 0);
-        let y = getRandomInt(6, 0);
+        let x = 0;
+        let y = 0;
+        x = getRandomInt(6, 0);
+        y = getRandomInt(6, 0);
 
-        if(playerData[y][x][0].classList.contains('player')){
+        if(playerData[y][x][0].classList.contains('player')){ 
             playerData[y][x][0].click();
         }else{
             aiTurn();
         }
+
+        
     }
+
     startGame.appendChild(turnDiv);
     startGame.appendChild(side(playerBoard, true));
     startGame.appendChild(side(enemyBoard,false));
     return startGame;
 }
+
 //animated list
 const animatedList = () =>{
     const animatedList = document.createElement('ul');
