@@ -57,8 +57,6 @@ const newGame = () =>{
             if(gameReady){
                 let playerData = gameData;
                 let enemyData = generateEnemyBoard();
-                console.log('game ready', playerData);
-                console.log('enemy board: ', enemyData);
                 placeContent(startGame(playerData, enemyData));
                 
             }
@@ -253,6 +251,8 @@ const startGame = (playerBoard, enemyBoard)=>{
         [4,'Battleship'], 
         [5,'Carrier']
       ];
+    //0 for player, 1 for ai;
+    let whoTurn = 0;
     const side = (board, player) =>{
         const side = document.createElement('div');
         side.classList.add('side');
@@ -262,28 +262,51 @@ const startGame = (playerBoard, enemyBoard)=>{
 
         const sideStatus = document.createElement('div');
         sideStatus.classList.add('side-status');
-        sideStatus.textContent = player?'Your Board: ':'Opponent Board: ';
+        sideStatus.textContent = player?'Player':'Opponent ';
         
         for(let y = 0; y < 7; y++){
             let tempData = [];
             for(let x = 0; x < 7; x++){
                 const gamePixel = document.createElement('div');
                 gamePixel.classList.add('game-pixel');
-                gamePixel.style.backgroundColor = 'rgb(0,0,0, 0.8)';
-                tempData.push([gamePixel, board[y][x]])
-                gamePixel.onclick = () =>{
-                    if(!player){
-                        if(hit(enemyData, y, x, enemyShip)){
-                            gamePixel.style.color = 'red';
-                            gamePixel.textContent = 'x';
-                        }else{
-                            gamePixel.style.color = 'white';
-                            gamePixel.textContent = 'x';
-                        }
-                        
-                    }else{
-                        hit(playerData, y, x, playerShip);
+                gamePixel.classList.add('pixel-place');
+                gamePixel.style.backgroundColor = 'rgb(0,0,0, 0.5)';
+                if(player){
+                    gamePixel.classList.add('player');
+                    if(board[y][x] != 0){
+                        gamePixel.style.backgroundColor = 'rgb(0,0,0, 0.8)';
                     }
+                }
+                
+                tempData.push([gamePixel, board[y][x]])
+                let clicked = 0;
+                let cd = 1;
+                gamePixel.onclick = () =>{
+                    if(!clicked){
+                        if(!player){
+                            if(!whoTurn){
+                                hit(enemyData, y, x, enemyShip); 
+                                whoTurn++;
+                                whoTurn = whoTurn%2;
+                                clicked = 1;
+
+                                setTimeout(() => {
+                                    aiTurn();
+                                }, 1000);
+                            }
+                        }else if(player){
+                            if(whoTurn){
+                                hit(playerData, y, x, playerShip);
+                                gamePixel.classList.remove('player');
+                                whoTurn++;
+                                whoTurn = whoTurn%2;
+                                clicked = 1;
+                            }  
+                            
+                        } 
+                    }
+                    
+                    
                 }
                 
                 sideBoard.appendChild(gamePixel);
@@ -296,24 +319,52 @@ const startGame = (playerBoard, enemyBoard)=>{
         return side;
     }
     const hit = (data, y, x, ship) =>{
+        const nameStatus = document.querySelectorAll('.side-status');
         const turnStatus = document.querySelector('.turn');
         if(data[y][x][1] != 0){
             if(ship[(data[y][x][1]) - 1][0] != 0){
-                turnStatus.textContent = 'Hit!'
+                turnStatus.textContent = 'Hit!';
+                data[y][x][0].style.color = 'red';
+                data[y][x][0].textContent = 'x';
+
+                if(whoTurn){
+                    nameStatus[0].style.color = 'red';
+                    setTimeout(() => {
+                        nameStatus[0].style.color = 'white';
+                    }, 500);
+                }else{
+                    nameStatus[1].style.color = 'red';
+                    setTimeout(() => {
+                        nameStatus[1].style.color = 'white';
+                    }, 500);
+                }
                 ship[(data[y][x][1]) - 1][0]--;
                 if(ship[(data[y][x][1]) - 1][0] == 0){
                     turnStatus.textContent = ship[(data[y][x][1]) - 1][1]+' has been sunk!';
                     }
-                    return true;
                 
             }
             
         }else{
-            turnStatus.textContent = 'Miss'
-            return false;
+            turnStatus.textContent = 'Miss!';
+            data[y][x][0].style.color = 'white';
+            data[y][x][0].textContent = 'x';
         }
     }
 
+    const aiTurn = ()=>{
+        function getRandomInt(max, floor) {
+            return Math.floor(Math.random() * max + floor);
+          }
+        let x = getRandomInt(6, 0);
+        let y = getRandomInt(6, 0);
+
+        if(playerData[y][x][0].classList.contains('player')){
+            playerData[y][x][0].click();
+        }else{
+            aiTurn();
+        }
+    }
     startGame.appendChild(turnDiv);
     startGame.appendChild(side(playerBoard, true));
     startGame.appendChild(side(enemyBoard,false));
