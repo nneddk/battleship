@@ -18,6 +18,8 @@
 
     position: absolute;
     z-index: 1;
+
+    cursor:not-allowed;
 }
 .turn{
     width: 80%;
@@ -66,4 +68,10 @@
 }
 .pixel-place{
     transition: all 0.3s;
+}
+.opponent{
+    cursor: crosshair;
+}
+.opponent:hover{
+    background-color: rgb(0, 0, 0, 0.5);
 }

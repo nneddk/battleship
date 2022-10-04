@@ -28,7 +28,7 @@
     align-items: center;
     font-family: 'Fredoka One', cursive;
     font-size: 1.8rem;  
-
+    cursor:crosshair;
     color:white;
 }
 .block-holder{
