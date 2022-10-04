@@ -4,13 +4,24 @@
 
     display:grid;
     grid-template-columns: 1fr 1fr;
-    grid-template-rows: 3fr 10fr;
+    grid-template-rows: 1fr 10fr;
     z-index: 1;
+
+    gap: 10px;
 }
-*{
-    border:solid;
-}
+
 .turn{
+    width: 80%;
+    font-family: 'Fredoka One', cursive;
+    font-size: 1.8rem;    
+    color:white;
+    display:flex;
+    justify-self: center;
+    justify-content: center;
+    align-items: center;
+    background-color: rgb(0, 0, 0, 0.5);
+
+    border-radius: 9999px;
     grid-column: 1/3;
 }
 .side{
@@ -22,9 +33,14 @@
 
     display:grid;
     grid-template-columns: 1fr;
-    grid-template-rows: 1fr 6fr 0.5fr;
-
-    gap: 1px
+    grid-template-rows: 1fr 7fr;
+}
+.side-status{
+    font-family: 'Fredoka One', cursive;
+    font-size: 1.8rem;    
+    color:white;
+    align-self: center;
+    justify-self: center;
 }
 .start-game-board{
     height: 60vmin;
