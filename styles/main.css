@@ -19,7 +19,7 @@ html, body{
 }
 .content{
     height: 90vh;
-    background-image: linear-gradient(to right, darkblue, lightblue, darkblue);
+    background-image: linear-gradient(to right,cyan, purple,purple, orange);
     display: flex;
     justify-content: center;
     align-items: center;
@@ -40,7 +40,7 @@ html, body{
 	width: 30px;
 	height: 30px;
     border-radius: 50%; 
-	background: blue;
+	background: purple;
     border: none;
 	animation: animate 10s linear infinite;
 	bottom: 0;
