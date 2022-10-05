@@ -38,8 +38,8 @@ const newGame = () =>{
             gameReady = false;
             currP = 0;
             currBlock = gamePiece[currP];
-            for(let i = 0; i < 7; i++){
-                for(let j = 0; j < 7; j++){
+            for(let i = 0; i < 9; i++){
+                for(let j = 0; j < 9; j++){
                     gameState[i][j][1] = 0;
                     gameState[i][j][2] = 0;
                     gameState[i][j][0].style.backgroundColor = 'rgb(0, 0, 0, 0.3)';
@@ -53,7 +53,7 @@ const newGame = () =>{
         gameStartBtn.classList.add('play-btn');
         gameStartBtn.textContent = 'play';
         gameStartBtn.onclick = () => {
-            //placeContent(startGame(generateEnemyBoard(),generateEnemyBoard()));
+            placeContent(startGame(generateEnemyBoard(),generateEnemyBoard()));
             if(gameReady){
                 let playerData = gameData;
                 let enemyData = generateEnemyBoard();
@@ -72,9 +72,9 @@ const newGame = () =>{
     //creates enemy board state
     const generateEnemyBoard = () => {
         let enemyData = [];
-        for (let y = 0; y < 7; y++){
+        for (let y = 0; y < 9; y++){
             let tempData = [];
-            for(let x = 0; x < 7; x++){
+            for(let x = 0; x < 9; x++){
                 tempData.push(0);
             }
             enemyData.push(tempData);
@@ -117,10 +117,10 @@ const newGame = () =>{
     const placeGameBoard = () =>{
         const newGameboard = document.createElement('div');
         newGameboard.classList.add('game-board')
-        for(let y = 0; y < 7; y++){
+        for(let y = 0; y < 9; y++){
             let tempStateArray = [];
             let tempDataArray = [];
-            for(let x = 0; x < 7; x++){
+            for(let x = 0; x < 9; x++){
                 const gamePixel = document.createElement('div');
                 gamePixel.classList.add('game-pixel');
                 tempDataArray.push(0);
@@ -176,8 +176,8 @@ const newGame = () =>{
                 editOn = true;
                 let tokenChanger = gameData[y][x];
                 currBlock = gamePiece[tokenChanger - 1];
-                for(let i = 0; i < 7; i++){
-                    for(let j = 0; j < 7; j++){
+                for(let i = 0; i < 9; i++){
+                    for(let j = 0; j < 9; j++){
                         if(gameState[i][j][1] == tokenChanger){
                             gameState[i][j][1] = 0;
                             orientation = gameState[i][j][2];
@@ -264,9 +264,9 @@ const startGame = (playerBoard, enemyBoard)=>{
         sideStatus.classList.add('side-status');
         sideStatus.textContent = player?'Player Board: ':'Opponent Board: ';
 
-        for(let y = 0; y < 7; y++){
+        for(let y = 0; y < 9; y++){
             let tempData = [];
-            for(let x = 0; x < 7; x++){
+            for(let x = 0; x < 9; x++){
                 const gamePixel = document.createElement('div');
                 gamePixel.classList.add('game-pixel');
                 gamePixel.classList.add('pixel-place');
@@ -282,9 +282,9 @@ const startGame = (playerBoard, enemyBoard)=>{
                 tempData.push([gamePixel, board[y][x]])
                 let clicked = 0;
                 gamePixel.onclick = () =>{
-                    if(!clicked){
+                    if(!clicked && !winActive){
                         if(!player){
-                            if(!whoTurn){
+                            if(whoTurn == 0){
                                 hit(enemyData, y, x, enemyShip); 
                                 whoTurn++;
                                 whoTurn = whoTurn%2;
@@ -295,7 +295,7 @@ const startGame = (playerBoard, enemyBoard)=>{
                                 }, 1200);
                             }
                         }else if(player){
-                            if(whoTurn){
+                            if(whoTurn == 1){
                                 hit(playerData, y, x, playerShip);
                                 gamePixel.classList.remove('player');
                                 whoTurn++;
@@ -304,11 +304,8 @@ const startGame = (playerBoard, enemyBoard)=>{
                             }  
                             
                         } 
-                    }
-                    
-                    
-                }
-                
+                    }   
+                }              
                 sideBoard.appendChild(gamePixel);
             }
             player?playerData.push(tempData):enemyData.push(tempData);
@@ -323,6 +320,7 @@ const startGame = (playerBoard, enemyBoard)=>{
         side.appendChild(sideBoard);
         return side;
     }
+    let winActive = false;
     const hit = (data, y, x, ship) =>{
         const nameStatus = document.querySelectorAll('.side-status');
         const turnStatus = document.querySelector('.turn');
@@ -338,13 +336,16 @@ const startGame = (playerBoard, enemyBoard)=>{
                 turnStatus.textContent = 'Hit!';
                 data[y][x][0].style.color = 'red';
                 data[y][x][0].textContent = 'x';
-                data[y][x][0].style.border = '2px dashed';
+                data[y][x][0].style.border = '2px solid';
 
 
                 ship[(data[y][x][1]) - 1][0]--;
                 if(ship[(data[y][x][1]) - 1][0] == 0){
                     turnStatus.textContent = ship[(data[y][x][1]) - 1][1]+' has been sunk!';
-                    }
+                }
+                
+                
+                
                 
             }
             
@@ -353,6 +354,28 @@ const startGame = (playerBoard, enemyBoard)=>{
             data[y][x][0].style.color = 'white';
             data[y][x][0].textContent = 'x';
         }
+        winActive = true;
+        for(let i = 0; i <= 4; i++){
+            if(ship[i][0] != 00) winActive = false; 
+        }
+        if(winActive) winScreen();
+    }
+    const winScreen = ()=>{
+        const turnStatus = document.querySelector('.turn');
+        if(!whoTurn){
+            turnStatus.textContent = 'You have Won!';
+        }else{
+            turnStatus.textContent = 'You Lost!';
+
+            for(let y = 0; y < 9; y++){
+                for(let x = 0; x < 9; x++){
+                    if(enemyData[y][x][1] != 0){
+                        enemyData[y][x][0].style.backgroundColor = 'rgb(0,0,0,0.5)';
+                    }
+                }
+            }
+        }
+        whoTurn = 2;
     }
     let combo = 0;
     let comboYX = [];
@@ -362,14 +385,52 @@ const startGame = (playerBoard, enemyBoard)=>{
           }
         let x = 0;
         let y = 0;
-        x = getRandomInt(6, 0);
-        y = getRandomInt(6, 0);
-
-        if(playerData[y][x][0].classList.contains('player')){ 
-            playerData[y][x][0].click();
+        switch(combo){
+            case 0:
+                x = getRandomInt(9, 0);
+                y = getRandomInt(9, 0);
+                break;
+            case 1:
+                y = comboYX[0];
+                x = comboYX[1] + 1;
+                break;
+            case 2:
+                y = comboYX[0] + 1;
+                x = comboYX[1];
+                break;
+            case 3:
+                y = comboYX[0];
+                x = comboYX[1] - 1;
+                break;
+            case 4:
+                y = comboYX[0] -1;
+                x = comboYX[1];
+                break;
+        }
+        
+        if(y >= 0 && y <= 10 && x >= 0 && x <= 10){
+            if(playerData[y][x][0].classList.contains('player')){
+            
+                playerData[y][x][0].click();
+                if (playerData[y][x][1] != 0){
+                    comboYX = [y, x];
+                    combo = 1;
+                }
+                if(combo != 0 && playerData[y][x][1] == 0){
+                    combo++;
+                }
+                
+                
+            }else{
+                combo = 0;
+                aiTurn();
+            }
         }else{
+            combo++;
+            combo = combo % 5;
             aiTurn();
         }
+        
 
         
     }
