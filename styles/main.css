@@ -11,7 +11,7 @@ html, body{
     background-color: black;
     color: lightgrey;
     z-index: 1;
-    padding-left: 1em;
+    padding-left: 2em;
     font-family: 'Fredoka One', cursive;
     font-size: 1.8rem;    
     display: flex;
